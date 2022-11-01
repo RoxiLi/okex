@@ -13,7 +13,7 @@ export class AuthenticationService {
      const ep = '/api/v5/asset/convert/currencies'
     const timestamp = this.getTimeUtc()
     const signature = this.getSing(timestamp,'GET',
-                      ep,'', process.env["OK-ACCESS-KEY"])
+                      ep,'', process.env["OK-ACCESS-SECRET-KEY"])
     const response =  this.httpService.get(
       'https://www.okx.com/api/v5/asset/convert/currencies',
       {
@@ -43,11 +43,12 @@ export class AuthenticationService {
     const preHash : string = timestamp + methodHttps + endPoint
       + (requestBody ? JSON.stringify(requestBody) : '')
 
+    const key = (Buffer.from(secretKey, 'base64')).toString()
     // 2: whithout prepared the secret Key
     // Sign the prehash string with the SecretKey using the HMAC SHA256.
     let singWithoutSecretKey = CryptoJS.enc.Base64.stringify(
-      CryptoJS.HmacSHA256(preHash, secretKey))
-    console.log(singWithoutSecretKey.toString())
+      CryptoJS.HmacSHA256(preHash, key))
+    console.log(singWithoutSecretKey)
 
     // 3: whit import crypto
     const hmac = crypto.createHmac('sha256',secretKey)
@@ -55,6 +56,6 @@ export class AuthenticationService {
     console.log(signature)
 
 
-    return signature.toString()
+    return signature
   }
 }
