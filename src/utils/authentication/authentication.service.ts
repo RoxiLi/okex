@@ -2,7 +2,7 @@ import {HttpException, Injectable} from '@nestjs/common';
 import {HttpService} from "@nestjs/axios";
 import {catchError, map, Observable} from "rxjs";
 import {AxiosResponse} from "axios";
-const crypto = require('crypto');
+import * as crypto from 'crypto';
 const CryptoJS = require("crypto-js");
 
 
@@ -35,19 +35,13 @@ export class AuthenticationService {
   }
   getTimeUtc(){
     const date = new Date();
-    return  date.toISOString()
+    return  date.toISOString();
   }
   getSing(timestamp : string, methodHttps : string,
           endPoint:string, requestBody: string, secretKey:string){
     // Create prehash string
     const preHash : string = timestamp + methodHttps + endPoint
       + (requestBody ? JSON.stringify(requestBody) : '')
-    // 1:Prepared the secret Key
-    const key = (Buffer.from(secretKey, 'base64')).toString()
-    // Sign the prehash string with the SecretKey using the HMAC SHA256.
-    let singWithPreparedSecretKey = CryptoJS.enc.Base64.stringify(
-      CryptoJS.HmacSHA256(preHash, key))
-     console.log(singWithPreparedSecretKey)
 
     // 2: whithout prepared the secret Key
     // Sign the prehash string with the SecretKey using the HMAC SHA256.
@@ -61,6 +55,6 @@ export class AuthenticationService {
     console.log(signature)
 
 
-    return signature
+    return signature.toString()
   }
 }
